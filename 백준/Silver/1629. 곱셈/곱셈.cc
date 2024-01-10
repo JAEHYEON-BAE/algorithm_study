@@ -1,16 +1,13 @@
 #include <cstdio>
-long long a, b, c, x;
-long long algorithm(long long b)
-{
-        if (b==0) {return 1;}
-        if (b==1) {return a%c;}
-        x = algorithm(b/2) %c;
-        if (b%2) return x*x%c*a%c;
-        else return x*x%c;
-}
+long long int a, b, c;
 int main()
 {
         scanf("%lld %lld %lld", &a, &b, &c);
-        printf("%lld", algorithm(b));
-        return 0;
+        long long int result = 1;
+        while (b > 0) {
+                if (b%2==1) {result=result*a%c;}
+                a=a*a%c;
+                b/=2;
+        }
+        printf("%lld", result);
 }
