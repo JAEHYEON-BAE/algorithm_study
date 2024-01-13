@@ -6,11 +6,8 @@ using namespace std;
 int main()
 {
         array<array<int, 1001>, 1001> dp;
-        char f[1001];
-        char s[1001];
-        scanf("%[^\n]", f);
-        scanf("\n");
-        scanf("%[^\n]", s);
+        char f[1001], s[1001];
+        scanf("%s %s", f, s);
 
         int m = (int) strlen(f);
         int n = (int) strlen(s);
