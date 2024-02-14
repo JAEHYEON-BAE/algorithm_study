@@ -1,18 +1,21 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
-void dfs(const int& cnt, const int& n, const int& m, const std::vector<int>& v, std::vector<int>& tmp)
+#include <string>
+void dfs(const int& cnt, const int& n, const int& m, const std::vector<int>& v, std::vector<int>& tmp, std::string& result)
 {
         if (cnt==m) {
                 for (int x: tmp) {
-                        std::cout << x << ' ';
+                        result += std::to_string(x) + ' ';
+//                      std::cout << x << ' ';
                 }
-                std::cout << '\n';
+                result += '\n';
+//              std::cout << '\n';
                 return;
         }
         for (int i=0;i<n;++i) {
                 tmp[cnt] = v[i];
-                dfs(cnt+1, n, m, v, tmp);
+                dfs(cnt+1, n, m, v, tmp, result);
         }
 }
 int main()
@@ -26,6 +29,8 @@ int main()
         }
         std::sort(v.begin(), v.end());
         std::vector<int> tmp(m);
-        dfs(0, n, m, v, tmp);
+        std::string result;
+        dfs(0, n, m, v, tmp, result);
+        std::cout << result;
         return 0;
 }
