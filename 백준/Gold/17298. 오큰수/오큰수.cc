@@ -12,10 +12,8 @@ int main()
         int i=0;
         while (n--) {
                 int x;  std::cin >> x;
-                int cnt = 0;
                 while (!stk.empty() && stk.top()<x) {
                         v[index.top()] = x;
-                        ++cnt;
                         stk.pop();
                         index.pop();
                 }
