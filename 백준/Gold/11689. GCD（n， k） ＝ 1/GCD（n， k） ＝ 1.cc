@@ -1,9 +1,6 @@
 // 11689
 
 #include <iostream>
-#include <vector>
-#include <algorithm>
-#include <cmath>
 
 int main() {
   std::ios_base::sync_with_stdio(false);
@@ -16,26 +13,25 @@ int main() {
     return 0;
   }
 
-  int sqrtn = sqrt(n) + 1;
-  std::vector<bool> isPrime(sqrtn + 1, true);
-  std::vector<int> primes;
-  isPrime[0] = isPrime[1] = false;
-
-  for (int i=2;i<=sqrtn;++i) {
-    if (isPrime[i]) {
-      primes.push_back(i);
-      for (int j=i*2;j<=sqrtn;j+=i) {
-        isPrime[j] = false;
-      }
-    }
-  }
-  
   long long int result=n;
-
-  for (int i: primes) {
+  if (n%2==0) {
+    result>>=1;
+    while (n%2==0) n>>=1;
+  }
+  if (n%3==0) {
+    result=(result/3)<<1;
+    while (n%3==0) n/=3;
+  }
+  for (int i=1;static_cast<long long int>(i)*i<=n;) {
+    i+=4;
     if (n%i==0) {
-      result = result/i * (i-1);
-      while (n>1 && n%i==0) n/=i;
+      result=result/i*(i-1);
+      while (n%i==0) n/=i;
+    }
+    i+=2;
+    if (n%i==0) {
+      result=result/i*(i-1);
+      while (n%i==0) n/=i;
     }
   }
   
