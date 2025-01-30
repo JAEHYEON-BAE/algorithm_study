@@ -1,5 +1,4 @@
 // 19686
-
 #include <iostream>
 #include <vector>
 #include <cassert>
