@@ -1,27 +1,17 @@
 // 5639
 #include <iostream>
 #include <vector>
+#include <algorithm>
 
 #define DEBUG(a) std::cerr << "CHECKPOINT #" << a << std::endl
 
-void print(int idx, const std::vector<int> &v, std::vector<bool> &done) 
+void print(std::vector<int>::iterator left, std::vector<int>::iterator right) 
 {
-  int left=-1, right=-1;
-  for (int i=idx+1;i<v.size();++i) {
-    if (done[i]) break;
-    if (left==-1 && v[i]<v[idx]) left=i;
-    if (right==-1 && v[i]>v[idx]) right=i;
-  }
-  if (left==-1 && right==-1) {
-    std::cout << v[idx] << '\n';
-    return;
-  }
-  if (left!=-1) done[left]=true;
-  if (right!=-1) done[right]=true;
-  
-  if (left!=-1) print(left, v, done);  
-  if (right!=-1) print(right, v, done);  
-  std::cout << v[idx] << '\n';
+  if (left>=right) return;
+  std::vector<int>::iterator mid = std::upper_bound(left+1, right, *left);
+  print(left+1, mid);
+  print(mid, right);
+  std::cout << *left << '\n';
   return;
 }
 
@@ -33,11 +23,6 @@ int main() {
   int x;
   std::vector<int> v;
   while (std::cin >> x) v.push_back(x);
-  
-  std::vector<bool> done(v.size(), false);
-  done[0]=true;
-
-  print(0, v, done);
-  
+  print(v.begin(), v.end());  
   return 0; 
 }
