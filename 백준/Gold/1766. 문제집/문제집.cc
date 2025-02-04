@@ -19,7 +19,6 @@ int main() {
     */
   std::vector<std::vector<int>> graph(n+1);
   std::vector<int> in_degree(n+1, 0);
-  std::vector<int> result;
   int a, b;
   for (int i=0;i<m;++i) {
     std::cin >> a >> b;
@@ -33,13 +32,12 @@ int main() {
   while (!pq.empty()) {
     int curr=pq.top();
     pq.pop();
-    result.push_back(curr);
+    std::cout << curr << ' ';
     for (const int& next: graph[curr]) {
       if (--in_degree[next]==0) pq.push(next);
     }
   }
 
-  for (int &x:result) std::cout << x << ' ';
   
   return 0; 
 }
