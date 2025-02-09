@@ -25,27 +25,14 @@ inline std::pair<int, int> mod(int x, int y)
 void form(int x, const int &b) 
 {
   std::string answer="";
-  if (x<0 && b>0) {
-    x*=-1;
-    while (x) {
-      std::pair<int, int> tmp=mod(x, b);
-      answer.push_back(static_cast<char>('0'+tmp.second));
-      x=tmp.first;
-    }
-    std::reverse(answer.begin(), answer.end());
-    std::cout << '-' << answer;
-    return;
+  while (x) {
+    std::pair<int, int> tmp=mod(x, b);
+    answer.push_back(static_cast<char>('0'+tmp.second));
+    x=tmp.first;
   }
-  else {
-    while (x) {
-      std::pair<int, int> tmp=mod(x, b);
-      answer.push_back(static_cast<char>('0'+tmp.second));
-      x=tmp.first;
-    }
-    std::reverse(answer.begin(), answer.end());
-    std::cout << answer;
-    return;
-  }
+  std::reverse(answer.begin(), answer.end());
+  std::cout << answer;
+  return;
 }
 
 int main() {
@@ -57,6 +44,7 @@ int main() {
   if (x==0) {
     std::cout << 0; return 0;
   }
+  if (x<0 && b>0) x*=-1, std::cout << '-';
 
   form(x, b);
   return 0; 
