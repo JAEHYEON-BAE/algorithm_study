@@ -7,10 +7,12 @@
 #define DEBUG(a) std::cerr << "CHECKPOINT #" << a << std::endl
 
 const int INF=(~0u)>>2;
+bool bigger(const std::string &a, const std::string &b);
 
 std::string plus(std::string &a, std::string &b)
 {
   while (a.size()>b.size()) b.push_back('0');
+  while (a.size()<b.size()) a.push_back('0');
 
   int n=a.size();
   std::string answer="";
@@ -28,10 +30,13 @@ std::string plus(std::string &a, std::string &b)
   return answer;  
 }
 
-std::string minus(std::string &a, std::string &b)
+std::string minus(std::string &a, std::string &b, bool neg)
 {
+  
   while (a.size()<b.size()) a.push_back('0');
   while (b.size()<a.size()) b.push_back('0');
+
+  if (!bigger(a, b)) std::swap(a, b);
   int n=a.size();
   std::string answer="";
   int sub, carry=0;
@@ -43,15 +48,23 @@ std::string minus(std::string &a, std::string &b)
     else sub=x+10-y, carry=1;
     answer.push_back(static_cast<char>(sub+'0'));
   }
-  while (answer.back()=='0') answer.pop_back(); 
+  while (answer.size()>1 && answer.back()=='0') answer.pop_back(); 
+  if (neg && answer!="0") answer.push_back('-');
   std::reverse(answer.begin(), answer.end());
+  
   return answer;
 }
 
-bool Compare(const std::string &a, const std::string &b)
+bool bigger(const std::string &a, const std::string &b)
 {
-  if (a.size()!=b.size()) return a.size()<b.size();
-  else return a<b;
+  if (a.size()!=b.size()) return a.size()>b.size();
+  else {
+    int n=a.size();
+    for (int i=n-1;i>=0;--i) {
+      if (a[i]!=b[i]) return a[i]>b[i];
+    }
+  }
+  return true;
 }
 
 int main() {
@@ -59,11 +72,10 @@ int main() {
   std::cin.tie(nullptr);
   std::cout.tie(nullptr);
 
-  std::string a, b, result;  std::cin >> a >> b;
-  if (Compare(a, b)) std::swap(a, b);
-  
+  std::string a, b;  std::cin >> a >> b;  
   std::reverse(a.begin(), a.end());
   std::reverse(b.begin(), b.end());
+
   
   if (a.back()=='-') {
     if (b.back()=='-') {
@@ -73,13 +85,15 @@ int main() {
     }
     else {
       a.pop_back(); 
-      std::cout << '-' << minus(a, b);
+      bool neg=bigger(a, b);
+      std::cout << minus(a, b, neg);
       return 0;
     }
   } else {
     if (b.back()=='-') {
       b.pop_back();
-      std::cout << minus(a, b);
+      bool neg=!bigger(a, b);
+      std::cout << minus(a, b, neg);
       return 0;
     }
     else { 
