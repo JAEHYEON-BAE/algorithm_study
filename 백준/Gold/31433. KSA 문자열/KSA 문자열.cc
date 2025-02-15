@@ -1,43 +1,67 @@
+// 31433
+
 #include <iostream>
-#include <string>
 #include <vector>
-int main()
-{
-        std::ios_base::sync_with_stdio(false);
-        std::cin.tie(NULL);     std::cout.tie(NULL);
-        std::string str;
-        std::cin >> str;
-        size_t len = str.size();
-        std::vector<bool> valid(len, true);
-        int count = 0;
-        if (len>=2 && str[0]=='S' && str[1]=='A') {
-                char match = 'K';
-                for (size_t i=2;i<len;++i) {
-                        const char c = str[i];
-                        if (c==match) {
-                                if (match=='K') match='S';
-                                else if (match=='S') match='A';
-                                else match='K';
-                        }
-                        else {
-                                ++count;
-                        }
-                }
-                ++count;
-        }
-        else {
-                char match = 'K';
-                for (const char& c: str) {
-                        if (c==match) {
-                                if (match=='K') match='S';
-                                else if (match=='S') match='A';
-                                else match='K';
-                        }
-                        else {
-                                ++count;
-                        }
-                }
-        }
-        std::cout << 2*count;
-        return 0;
+#include <algorithm>
+
+#define DEBUG(a) std::cerr << "CHECKPOINT #" << a << std::endl
+
+const int INF = (~0u) >> 2;
+
+int main() {
+  std::ios_base::sync_with_stdio(false);
+  std::cin.tie(nullptr);
+  std::cout.tie(nullptr);
+
+  std::string str; std::cin >> str;
+  if (str.size()==1) {
+    if (str=="K") {std::cout << 0;return 0;}
+    else {std::cout << 2;return 0;}
+  } 
+  else if (str.size()==2) {
+    if (str[0]=='K') {
+      if (str[1]=='S') {std::cout << 0;return 0;}
+      else {std::cout << 2;return 0;}
+    }
+    else if (str[0]=='S') {
+      std::cout << 2;return 0;
+    } 
+    else {
+      if (str[1]=='K') {std::cout << 2;return 0;}
+      else {std::cout << 4;return 0;}
+    }
+  }
+
+  
+  int idx=0;
+  int cnt=0;
+  if (str[0]=='K') { 
+    for (const char &c: str) {
+      if (idx==0 && c=='K') ++idx;
+      else if (idx==1 && c=='S') ++idx;
+      else if (idx==2 && c=='A') ++idx;
+      else ++cnt;
+      idx%=3;
+    }
+  } else if (str[0]=='S') {
+    for (const char &c: str) {
+      if (idx==0 && c=='S') ++idx;
+      else if (idx==1 && c=='A') ++idx;
+      else if (idx==2 && c=='K') ++idx;
+      else ++cnt;
+      idx%=3;
+    }
+  } else {
+    for (const char &c: str) {
+      if (idx==0 && c=='A') ++idx;
+      else if (idx==1 && c=='K') ++idx;
+      else if (idx==2 && c=='S') ++idx;
+      else ++cnt;
+      idx%=3;
+    }
+  }
+
+  std::cout << 2*cnt;
+
+  return 0;
 }
