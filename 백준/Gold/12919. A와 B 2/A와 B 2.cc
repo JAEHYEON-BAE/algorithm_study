@@ -3,28 +3,29 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
-#include <queue>
-#include <unordered_set>
+#include <stack>
 
 #define DEBUG(a) std::cerr << "CHECKPOINT #" << a << std::endl
 
 const int INF=(~0u)>>2;
 const int nINF=(1<<31);
 
-void compare(const std::string &s, std::string t)
+bool compare(const std::string &s, std::string t)
 {
   if (s==t) {
-    std::cout << 1; exit(0);
+    return true;
   }
-  if (s.size()>t.size()) return;
+  if (s.size()>t.size()) return false;
   
   std::string tmp=t;
-  if (tmp.back()=='A') {tmp.pop_back(); compare(s, tmp);}
-  if (t[0]=='B') {
+  bool success=false;
+  if (tmp.back()=='A') {tmp.pop_back(); success=compare(s, tmp);}
+  if (!success && t[0]=='B') {
     std::reverse(t.begin(), t.end());
     t.pop_back();
-    compare(s, t);
+    success=compare(s, t);
   }
+  return success;
 }
 
 int main() {
@@ -33,8 +34,7 @@ int main() {
   std::cout.tie(nullptr);
 
   std::string s, t;  std::cin >> s >> t;
-  compare(s, t);
-  std::cout << 0;
+  std::cout << compare(s, t);
 
   return 0;
 }
