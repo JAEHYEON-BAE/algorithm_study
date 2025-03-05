@@ -1,4 +1,4 @@
-// 18310
+// 16495
 
 #include <iostream>
 #include <vector>
@@ -17,9 +17,18 @@ int main() {
   std::cout.tie(nullptr);
 
   int n;  std::cin >> n;
-  std::vector<int> v(n);
-  for (int i=0;i<n;++i) std::cin >> v[i];
-  std::sort(v.begin(), v.end());
-  std::cout << v[(n-1)>>1];
+  int cnt[100'001]{};
+  for (int i=0;i<n;++i) {
+    int x;  std::cin >> x;
+    ++cnt[x];
+  }
+  int count=0;
+  for (int i=0;i<100'001;++i) {
+    count+=cnt[i];
+    if (count>=((n+1)>>1)) {
+      std::cout << i;
+      return 0;
+    }
+  }
   return 0;
 }
