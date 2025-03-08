@@ -4,7 +4,7 @@
 #include <vector>
 #include <algorithm>
 #include <unordered_map>
-#include <unordered_set>
+#include <bitset>
 
 #define DEBUG(a) std::cerr << "CHECKPOINT #" << a << std::endl
 
@@ -19,23 +19,25 @@ int insert(const std::string &s, std::unordered_map<std::string, int> &map)
   return map[s];
 }
 
-std::pair<int, std::unordered_set<int>> DFS(const int &node, std::vector<int> &dp, std::vector<std::unordered_set<int>> &files, const std::vector<std::vector<int>> &children, const std::vector<bool> &is_dir) 
+std::pair<int, std::bitset<2001>> DFS(const int &node, std::vector<int> &dp, std::vector<std::bitset<2001>> &files, const std::vector<std::vector<int>> &children, const std::vector<bool> &is_dir) 
 {
   if (dp[node]!=-1) {
     return {dp[node], files[node]};
   }
   if (!is_dir[node]) {
-    return {dp[node]=1, files[node]={node}};
+    std::bitset<2001> tmp(0);
+    tmp.set(node);
+    return {dp[node]=1, files[node]=tmp};
   }
-  int cnt=0; std::unordered_set<int> set;
+  int cnt=0; std::bitset<2001> tmp(0);
   for (int child:children[node]) {
     auto result=DFS(child, dp, files, children, is_dir);
     cnt+=result.first;
-    for (int file:result.second) set.insert(file);
+    tmp|=result.second;
   }
   // std::cout << "for node " << node << ':' << '\t';
   // std::cout << cnt << '\t' << set.size() << std::endl;
-  return {dp[node]=cnt, files[node]=set};
+  return {dp[node]=cnt, files[node]=tmp};
 }
 
 int main() {
@@ -46,7 +48,8 @@ int main() {
   int n, m;  std::cin >> n >> m;
   std::unordered_map<std::string, int> map;
   std::vector<int> dp(n+m+1, -1);
-  std::vector<std::unordered_set<int>> files(n+m+1);
+  // std::vector<std::unordered_set<int>> files(n+m+1);
+  std::vector<std::bitset<2001>> files(n+m+1, 0);
   std::vector<std::vector<int>> children(n+m+1);
   std::vector<bool> is_dir(n+m+1, false);
   for (int i=0;i<n+m;++i) {
@@ -75,7 +78,7 @@ int main() {
     }
     int idx=map[tmp];
     auto result=DFS(idx, dp, files, children, is_dir);
-    std::cout << result.second.size() << ' ' << result.first << '\n';
+    std::cout << result.second.count() << ' ' << result.first << '\n';
   }
   
 
