@@ -41,20 +41,17 @@ int main() {
   std::cout.tie(nullptr);
 
   int n;  std::cin >> n;
-  std::vector<std::pair<long long int, int>> v(n); 
 
-  std::vector<long long int> init(n);
+  std::vector<long long int> a(n), v(n);
   for (int i=0;i<n;++i) {
-    std::cin >> v[i].first;
-    v[i].second=i;
-    init[i]=v[i].first;
+    std::cin >> v[i];
+    a[i]=v[i];
   }
   std::sort(v.begin(), v.end());
-  // for (auto x:v) std::cout << x.first << ' ' << x.second << '\n';
   for (int i=0;i<n;++i) {
-    if (v[i].second==i) continue;
+    if (v[i]==a[i]) continue;
     else {
-      if (is_sqr(init[i], v[i].first)) continue;
+      if (is_sqr(v[i], a[i])) continue;
       else {
         std::cout << "NO";
         return 0;
