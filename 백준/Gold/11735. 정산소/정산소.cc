@@ -2,8 +2,7 @@
 
 #include <iostream>
 #include <vector>
-#include <algorithm>
-#include <map>
+#include <unordered_set>
 
 #define DEBUG(a) std::cerr << #a << " = " << a << std::endl
 
@@ -18,8 +17,8 @@ int main() {
 
   long long int n; int q;
   std::cin >> n >> q;
-  std::vector<std::vector<bool>> zero(n+1, std::vector<bool>(2, 0));
-  // zero[r][0], zero[c][1]
+
+  std::unordered_set<int> r_set, c_set;
 
   char c; long long int x;
   long long int sum = n*(n+1)/2;
@@ -28,22 +27,31 @@ int main() {
   long long int r_num=0, c_num=0;
   while (q--) {
     std::cin >> c >> x;
-    if (zero[x][(c=='R')?0:1]) std::cout << 0 << '\n';
-    else if (c=='R') {
+    if (c=='R') {
+      if (r_set.find(x)!=r_set.end()) {
+        std::cout << 0 << '\n';
+        continue;
+      }
+      
       long long int tmp = x*n+sum;
       tmp -= r_num*x + r_minus;
       std::cout << tmp << '\n';
       c_minus += x;
       ++c_num;
-      zero[x][0]=1;
+      r_set.insert(x);
     }
     else {
+      if (c_set.find(x)!=c_set.end()) {
+        std::cout << 0 << '\n';
+        continue;
+      }
+      
       long long int tmp = x*n+sum;
       tmp -= c_num*x + c_minus;
       std::cout << tmp << '\n';
       r_minus += x;
       ++r_num;
-      zero[x][1]=1;
+      c_set.insert(x);
     }
   }
   
