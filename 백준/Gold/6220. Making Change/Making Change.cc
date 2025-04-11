@@ -15,24 +15,14 @@ int main() {
   std::cout.tie(nullptr);
 
   int c, n;  std::cin >> c >> n;
+  std::vector<int> coin(n);
+  for (int i=0;i<n;++i) std::cin >> coin[i];
+  std::vector<int> dp(c+1, INF);
 
-  std::vector<std::vector<bool>> dp(c+1, std::vector<bool>(c+1, 0));
-  dp[0][c]=1;
-  int x;
-  for (int i=0;i<n;++i) {
-    std::cin >> x;
-    std::vector<std::vector<bool>> tmp(c+1, std::vector<bool>(c+1, 0));
-    for (int f=0;f<=c;++f) for (int s=0;s<=c;++s) {
-      if (dp[f][s]) for (int j=0;j<=s/x;++j) {
-        dp[f+j][s-j*x]=1;
-      }
-    }
+  dp[0]=0;
+  for (int i=0;i<=c;++i) for (int j=0;j<n;++j) {
+    if (coin[j]<=i) dp[i]=std::min(dp[i], 1+dp[i-coin[j]]);
   }
-  for (int i=0;i<=c;++i) {
-    if (dp[i][0]) {
-      std::cout << i;
-      return 0;
-    }
-  }
+  std::cout << dp[c];
   return 0;
 }
