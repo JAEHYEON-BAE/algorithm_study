@@ -1,11 +1,6 @@
-// 26604
-
 #include <iostream>
 #include <vector>
 #include <algorithm>
-
-#define DEBUG(a) std::cerr << #a << " = " << a << std::endl
-
 int main() {
   std::ios_base::sync_with_stdio(false);
   std::cin.tie(nullptr); 
