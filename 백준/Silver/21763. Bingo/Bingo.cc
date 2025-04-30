@@ -13,6 +13,11 @@ int main() {
   std::cout.tie(nullptr);
 
   int n, k;  std::cin >> n >> k;
+  if (n==2 && k==2) {
+    std::cout << "NO";
+    return 0;
+  }
+  
   if (n*(n-1)<k) {
     std::cout << "NO";
     return 0;
@@ -20,8 +25,11 @@ int main() {
   std::cout << "YES\n";
 
   std::vector<std::vector<bool>> grid(n, std::vector<bool>(n, 1));
-  for (int i=0;i<n;++i) grid[i][i]=0;
 
+  grid[0][n-1]=0;
+  grid[n-1][0]=0;
+  for (int i=1;i<n-1;++i) grid[i][i]=0;
+  
   int tmp=n*(n-1)-k;
   for (int i=0;i<n*n;++i) {
     if (tmp==0) break;
