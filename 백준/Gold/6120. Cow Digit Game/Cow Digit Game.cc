@@ -25,7 +25,8 @@ std::pair<int, int> digit(int x)
 }
 bool dp(int x, std::vector<int> &W)
 {
-  for(int i=1;i<=x;++i) {
+  if (W[x]!=-1) return W[x];
+  for (int i=1;i<=x;++i) {
     if (W[i]!=-1) continue;
     std::pair<int, int> tmp=digit(i);
     W[i]=(W[i-tmp.first] && W[i-tmp.second])?0:1;
