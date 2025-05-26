@@ -7,6 +7,32 @@
 #include <cassert>
 #include <queue>
 
+#define DEBUG(a) std::cerr << #a << " = " << a << std::endl
+
+static constexpr int INF=(~0u)>>2;
+static constexpr int nINF=(1<<31);
+static constexpr long long int power10[19]={1, 10, 100, 1'000, 10'000, 100'000, 1'000'000, 10'000'000, 100'000'000, 1'000'000'000, 10'000'000'000, 100'000'000'000, 1'000'000'000'000, 10'000'000'000'000, 100'000'000'000'000, 1'000'000'000'000'000, 10'000'000'000'000'000, 100'000'000'000'000'000, 1'000'000'000'000'000'000};
+
+template <typename T>
+inline void print_v(const std::vector<std::vector<T>> &v)
+{
+  for (auto x:v) {
+    for (auto y:x) std::cout << y << ' ';
+    std::cout << '\n';
+  }
+  std::cout << std::endl;
+  return;
+}
+template <typename T, size_t N>
+inline void print_v(const T (&v)[N][N])
+{
+  for (int i=0;i<N;++i) {
+    for (int j=0;j<N;++j) std::cout << v[i][j] << ' ';
+    std::cout << '\n';
+  }
+  std::cout << std::endl;
+}
+
 void up(std::vector<std::vector<int>> &v)
 {
   int n=v.size();
@@ -100,6 +126,27 @@ void left(std::vector<std::vector<int>> &v)
   }
 }
 
+void DFS(std::vector<std::vector<int>> &v, int depth, int &max)
+{
+  if (depth==5) {
+    int n=v.size();
+    for (int i=0;i<n;++i) for (int j=0;j<n;++j) {
+      max=std::max(max, v[i][j]);
+    }
+    return;
+  }
+  
+  for (int d=0;d<4;++d) {
+    auto tmp=v;
+    if (d==0) up(v);
+    else if (d==1) right(v);
+    else if (d==2) down(v);
+    else left(v);
+
+    DFS(v, depth+1, max);
+    v=tmp;
+  }
+}
 
 int main() {
   std::ios_base::sync_with_stdio(false);
@@ -111,23 +158,8 @@ int main() {
   for (int i=0;i<n;++i) for (int j=0;j<n;++j) std::cin >> v[i][j];
 
   int max=0;
-  for (int bitmask=0;bitmask<(1<<10);++bitmask) {
-    auto tmp=v;
-    for (int i=0;i<5;++i) {
-      int d=bitmask>>(i<<1)&0b11;
 
-      if (d==0) up(tmp);
-      else if (d==1) right(tmp);
-      else if (d==2) down(tmp);
-      else left(tmp);
-    }
-
-    int x=0;
-    for (int i=0;i<n;++i) for (int j=0;j<n;++j) {
-      x=std::max(x, tmp[i][j]);
-    }
-    max=std::max(max, x);
-  }
+  DFS(v, 0, max);
   std::cout << max;
   return 0;
 }
