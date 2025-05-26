@@ -1,32 +1,23 @@
-// 12100
+// 1799
 
 #include <iostream>
 #include <vector>
 #include <string>
 #include <algorithm>
 #include <cassert>
+#include <unordered_set>
 
-static int result[2]={0, 0};
-void backtracking(int r, int c, int cnt, bool color, std::vector<std::vector<bool>> &board, std::vector<bool> &used_1, std::vector<bool> &used_2)
+bool bp_m(int x, std::vector<int> &match, std::vector<bool> &done, const std::vector<std::unordered_set<int>> &graph)
 {
-  int n=board.size();
-  if (c>=n) {
-    ++r;
-    if (c&1) c=0;
-    else c=1;
+  for (const int &y:graph[x]) if (!done[y]) {
+    done[y]=1;
+    if (match[y]==-1 || bp_m(match[y], match, done, graph)) {
+      match[y]=x;
+      return 1;
+    }
   }
-  if (r>=n) {
-    result[color]=std::max(result[color], cnt);
-    return;
-  }
-  if (board[r][c] && !used_1[c-r+n-1] && !used_2[r+c]) {
-    used_1[c-r+n-1]=used_2[r+c]=1;
-    backtracking(r, c+2, cnt+1, color, board, used_1, used_2);
-    used_1[c-r+n-1]=used_2[r+c]=0;
-  }
-  backtracking(r, c+2, cnt, color, board, used_1, used_2);
+  return 0;
 }
-
 
 int main() {
   std::ios_base::sync_with_stdio(false);
@@ -34,16 +25,18 @@ int main() {
   std::cout.tie(nullptr);
 
   int n;  std::cin >> n;
-  std::vector<std::vector<bool>> board(n, std::vector<bool>(n));
+  std::vector<std::unordered_set<int>> graph((n<<1)-1);
+  
   for (int i=0;i<n;++i) for (int j=0;j<n;++j) {
     int x;  std::cin >> x;
-    board[i][j]=x;
+    if (x) graph[i+j].insert(i-j+n-1);
   }
-  std::vector<bool> used_1(n<<1, 0), used_2(n<<1, 0);
-
-  backtracking(0, 0, 0, 0, board, used_1, used_2);
-  backtracking(0, 1, 0, 1, board, used_1, used_2);
-
-  std::cout << result[0]+result[1];
+  std::vector<int> match((n<<1)-1, -1);
+  int cnt=0;
+  for (int i=0;i<(n<<1)-1;++i) {
+    std::vector<bool> done((n<<1)-1, 0);
+    if (bp_m(i, match, done, graph)) ++cnt;
+  }
+  std::cout << cnt;
   return 0;
 }
