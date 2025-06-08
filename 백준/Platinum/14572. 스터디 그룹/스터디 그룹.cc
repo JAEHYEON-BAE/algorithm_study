@@ -9,6 +9,23 @@
 
 #define DEBUG(a) std::cerr << #a << " = " << a << std::endl
 
+char get()
+{
+  static char buf[100'000], *S=buf, *T=buf;
+  if (S==T) {
+    T=(S=buf)+fread(buf, 1, 100'000, stdin);
+    if (S==T) return EOF;
+  }
+  return *S++;
+}
+void read(int &x)
+{
+  static char c; x=0;
+  for (c=get();c<'0';c=get());
+  for (;c>='0';c=get()) x=x*10+(c-'0');
+}
+
+
 static constexpr int INF=(~0u)>>2;
 static constexpr int nINF=(1<<31);
 static constexpr long long int power10[19]={1, 10, 100, 1'000, 10'000, 100'000, 1'000'000, 10'000'000, 100'000'000, 1'000'000'000, 10'000'000'000, 100'000'000'000, 1'000'000'000'000, 10'000'000'000'000, 100'000'000'000'000, 1'000'000'000'000'000, 10'000'000'000'000'000, 100'000'000'000'000'000, 1'000'000'000'000'000'000};
@@ -48,14 +65,17 @@ int main() {
   std::cin.tie(nullptr); 
   std::cout.tie(nullptr);
 
-  int n, k, D;  std::cin >> n >> k >> D;
+  int n, k, D;  read(n), read(k), read(D);
+  // std::cin >> n >> k >> D;
 
   std::vector<Student> students;
   for (int i=0;i<n;++i) {
-    int m, d;  std::cin >> m >> d;
+    int m, d;  read(m), read(d);
+    // std::cin >> m >> d;
     int a=0;
     for (int j=0;j<m;++j) {
-      int x;  std::cin >> x;
+      int x;  read(x);
+      // std::cin >> x;
       a|=1<<(--x);
     }
     students.push_back(Student(a, d));
