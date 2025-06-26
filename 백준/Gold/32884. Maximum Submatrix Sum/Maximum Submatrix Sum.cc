@@ -4,6 +4,7 @@
 #include <vector>
 #include <algorithm>
 
+
 int main() 
 {
   std::ios_base::sync_with_stdio(false);
@@ -39,7 +40,7 @@ int main()
     for (int cs=0;cs<m;++cs) {
       std::vector<int> tmp(n, 0);
       for (int ce=cs;ce<m;++ce) {
-        for (int r=0;r<m;++r) tmp[r]=v[r][ce];
+        for (int r=0;r<m;++r) tmp[r]+=v[r][ce];
 
         int sum=tmp[0], max=tmp[0];
 
