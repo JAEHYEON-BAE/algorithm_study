@@ -14,11 +14,11 @@ int main()
   int w, n;  std::cin >> w >> n;
   std::vector<int> v(n);
   for (int i=0;i<n;++i) std::cin >> v[i];
-  // std::sort(v.begin(), v.end());
-
+  std::sort(v.begin(), v.end());
+  
   std::array<int, 400'001> ii, jj;
   for (int i=0;i<400'001;++i) ii[i]=jj[i]=-1;
-  // std::vector<int> ii(400'001, -1), jj(400'001, -1);
+
   for (int i=0;i<n-1;++i) for (int j=i+1;j<n;++j) {
     int s=v[i]+v[j];
     if (ii[s]==-1) ii[s]=i, jj[s]=j;
