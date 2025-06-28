@@ -3,7 +3,7 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
-#include <unordered_map>
+#include <array>
 
 int main() 
 {
@@ -14,18 +14,20 @@ int main()
   int w, n;  std::cin >> w >> n;
   std::vector<int> v(n);
   for (int i=0;i<n;++i) std::cin >> v[i];
-  std::sort(v.begin(), v.end());
+  // std::sort(v.begin(), v.end());
 
-  std::unordered_map<int, std::pair<int, int>> map;
+  std::array<int, 400'001> ii, jj;
+  for (int i=0;i<400'001;++i) ii[i]=jj[i]=-1;
+  // std::vector<int> ii(400'001, -1), jj(400'001, -1);
   for (int i=0;i<n-1;++i) for (int j=i+1;j<n;++j) {
-    if (!map.count(v[i]+v[j])) map[v[i]+v[j]]={i, j};
+    int s=v[i]+v[j];
+    if (ii[s]==-1) ii[s]=i, jj[s]=j;
   }
 
   for (int i=0;i<n-1;++i) for (int j=i+1;j<n;++j) {
     int tmp=w-v[i]-v[j];
-    if (tmp<0 || !map.count(tmp)) continue;
-    const auto &[ii, jj]=map.at(tmp);
-    if (ii!=i && ii!=j && jj!=i && jj!=j) {
+    if (tmp>400'000 || tmp<0 || ii[tmp]<0 || jj[tmp]<0) continue;
+    if (ii[tmp]!=i && ii[tmp]!=j && jj[tmp]!=i && jj[tmp]!=j) {
       std::cout << "YES";
       return 0;
     }
