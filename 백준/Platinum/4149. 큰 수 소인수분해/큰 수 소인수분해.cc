@@ -4,19 +4,24 @@
 #include <vector>
 #include <algorithm>
 #include <random>
-#include <set>
+#include <array>
+#include <cassert>
+
+std::array<bool, 100'000> is_prime;
+void init()
+{
+  std::fill(is_prime.begin(), is_prime.end(), 1);
+  is_prime[0]=is_prime[1]=0;
+  for (int i=2;i*i<100'000;++i) if (is_prime[i]) {
+    for (int j=i*i;j<100'000;j+=i) is_prime[j]=0;
+  }
+}
 
 long long int mod_mul(long long int a, long long int b, const long long int &MOD)
 {
   a%=MOD;
   b%=MOD;
-  long long int result=0;
-  while (b) {
-    if (b&1) result=(result+a)%MOD;
-    a=(a<<1)%MOD;
-    b>>=1;
-  }
-  return result%MOD;
+  return static_cast<long long int>(static_cast<__int128>(a)*static_cast<__int128>(b)%MOD);
 }
 long long int mod_exp(long long int a, long long int r, const long long int &MOD)
 {
@@ -33,8 +38,10 @@ long long int mod_exp(long long int a, long long int r, const long long int &MOD
 bool Miller_Rabin(const long long int n)
 {
   if (n==1) return 0;
-  else if (n==2) return 1;
+  else if (n==2 || n==3) return 1;
   else if (!(n&1)) return 0;
+
+  if (n<100'000) return is_prime[n];
   
   const long long int a[12]={2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37};
 
@@ -46,25 +53,29 @@ bool Miller_Rabin(const long long int n)
 
   bool COMPOSITE_FLAG=0;
   for (int i=0;i<12;++i) {
-    long long int base=a[i]%n;
-    if (base==0 || base==1) continue;
+    long long int base=a[i];
+    assert(base>1 && base<n-1);
     
-    long long int prev, curr=mod_exp(base, u, n);
+    long long int prev=-1, curr=mod_exp(base, u, n);
+    if (curr==1 || curr==n-1) continue;
+    
     for (int k=1;k<=t;++k) {
       prev=curr;
       curr=mod_mul(prev, prev, n);
       if (prev!=1 && prev!=n-1 && curr==1) {
-        COMPOSITE_FLAG=1;
-        break;
+        // COMPOSITE_FLAG=1;
+        // break;
+        return 0;
       }
     }
-    if (COMPOSITE_FLAG) break;
+    // if (COMPOSITE_FLAG) break;
     if (curr!=1) {
-      COMPOSITE_FLAG=1;
-      break;
+      // COMPOSITE_FLAG=1;
+      // break;
+      return 0;
     }
   }
-  return !COMPOSITE_FLAG;
+  return 1;
 }
 
 long long int GCD(long long int a, long long int b)
@@ -101,10 +112,10 @@ long long int pollard_rho(long long int n)
   return d;  
 }
 
-void prime_factorization(long long int n, std::set<long long int> &factors) {
+void prime_factorization(long long int n, std::vector<long long int> &factors) {
   if (n==1) return;
   if (Miller_Rabin(n)) {
-    factors.insert(n);
+    factors.push_back(n);
     return;
   }
 
@@ -119,9 +130,12 @@ int main()
   std::cin.tie(nullptr); 
   std::cout.tie(nullptr);
 
+  init();
+
   long long int n;  std::cin >> n;
-  std::set<long long int> factors;
+  std::vector<long long int> factors;
   prime_factorization(n, factors);
+  std::sort(factors.begin(), factors.end());
 
   for (auto &f:factors) std::cout << f << '\n';
 
