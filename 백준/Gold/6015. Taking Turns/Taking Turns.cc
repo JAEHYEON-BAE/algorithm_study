@@ -14,15 +14,14 @@ int main()
   std::vector<long long int> w(n);
   for (int i=0;i<n;++i) std::cin >> w[i];
 
-  std::vector<std::pair<long long int, long long int>> dp(n);
-  dp[n-1]={w[n-1], 0};
-  for (int i=n-2;i>=0;--i) {
-    std::pair<long long int, long long int> take={w[i]+dp[i+1].second, dp[i+1].first};
-    std::pair<long long int, long long int> skip=dp[i+1];
-    if (take.first>=skip.first) dp[i]=take;
-    else dp[i]=skip;
+  long long int f=0, s=0;
+  for (int i=n-1;i>=0;--i) {
+    if (w[i]+s>=f) {
+      std::swap(f, s);
+      f+=w[i];
+    }
   }
-  std::cout << dp[0].first << ' ' << dp[0].second;
+  std::cout << f << ' ' << s;
   
   return 0;
 }
