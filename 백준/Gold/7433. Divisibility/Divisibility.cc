@@ -3,6 +3,7 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <bitset>
 
 int main() 
 {
@@ -11,20 +12,24 @@ int main()
   std::cout.tie(nullptr);
 
   int n, k;  std::cin >> n >> k;
-  std::vector<bool> mod(k, 0);
+  // std::vector<bool> mod(k, 0);
+
+  auto mod=[&k](int x) {
+    return ((x%k)+k)%k;
+  };
+  
+  std::vector<std::bitset<100>> dp(n, 0);
   int x;  std::cin >> x;
-  mod[((x%k)+k)%k]=1;
+  dp[0][mod(x)]=1;
   
   for (int i=1;i<n;++i) {
     std::cin >> x;
-    std::vector<bool> tmp(mod.size(), 0);
     for (int j=0;j<k;++j) {
-      if (mod[j]) tmp[((j+x)%k+k)%k]=tmp[((j-x)%k+k)%k]=1;
+      if (dp[i-1][j]) dp[i][mod(j+x)]=dp[i][mod(j-x)]=1;
     }
-    mod=tmp;
   }
 
-  std::cout << ((mod[0])?"Divisible":"Not divisible");
+  std::cout << ((dp[n-1][0])?"Divisible":"Not divisible");
 
   return 0;
 }
