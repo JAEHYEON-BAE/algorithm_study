@@ -48,7 +48,7 @@ namespace fastio
 
 class FenwickTree 
 {
-  int size;
+  int n;
   std::vector<long long int> tree;
 
   long long int find(int idx) const {
@@ -61,21 +61,19 @@ class FenwickTree
   }
 
 public:
-  FenwickTree(const int &n) {
-    size=1;
-    while (size<n) size<<=1;
-    tree.assign(size+1, 0);
+  FenwickTree(const int &n): n(n) {
+    tree.assign(n+1, 0LL);
   }
 
   void insert(int idx) {
-    while (idx<=size) {
+    while (idx<=n) {
       ++tree[idx];
       idx+=(idx&-idx);
     }
   }
 
   long long int query(int x) const {
-    return find(size)-find(x);
+    return find(n)-find(x);
   }
 };
 
@@ -95,7 +93,7 @@ int main()
     map[x]=i+1;
   }
 
-  FenwickTree ft(n+1);
+  FenwickTree ft(n);
 
   long long int cnt=0;
   for (int i=0;i<n;++i) {
