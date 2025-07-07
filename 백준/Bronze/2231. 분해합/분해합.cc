@@ -12,7 +12,7 @@ int main()
 
   int n;  std::cin >> n;
 
-  for (int i=0;i<n;++i) {
+  for (int i=n-60;i<n;++i) {
     int tmp=i;
     int sum=tmp;
     while (tmp) {
