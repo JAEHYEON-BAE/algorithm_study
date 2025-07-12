@@ -5,6 +5,8 @@
 #include <algorithm>
 #include <cassert>
 #include <map>
+#include <set>
+
 
 inline long long int mod_mul(long long int a, long long int b, const long long int &MOD)
 {
@@ -136,7 +138,21 @@ void factor_pairs(int i, long long int d, const std::vector<std::pair<long long 
   }
 }
 
-
+long long int cnt_factors(long long int n)
+{
+  long long int result=1LL;
+  while (n>1) {
+    if (miller_rabin(n)) {
+      result*=2;
+      break;
+    }
+    long long int d=pollard_rho(n);
+    long long int cnt=1LL;
+    while (!(n%d)) n/=d, ++cnt;
+    result*=cnt;
+  }
+  return result;
+}
 
 int main() 
 {
@@ -147,13 +163,22 @@ int main()
   long long int a, b, c, d;
   std::cin >> a >> b >> c >> d;
 
-  if (a==0) {
-    if (b==0 && c==0) {
+  if (b==0 && c==0) {
+    if (a==0) {
       if (d==0) std::cout << "INFINITY";
       else std::cout << '0';
       return 0;
     }
-    
+    else if (d==0) {
+      std::cout << "INFINITY";
+      return 0;
+    }
+    else if (d%a) {
+      std::cout << '0';
+      return 0;
+    }
+  }
+  else if (a==0) {
     long long int g=GCD(b, c);
     if (d%g) std::cout << '0';
     else std::cout << "INFINITY";
@@ -184,50 +209,48 @@ int main()
     std::vector<std::pair<long long int, long long int>> pairs;
     factor_pairs(0, 1, f, tmp, pairs);
 
-    std::vector<std::pair<long long int, long long int>> result;
+    std::set<std::pair<long long int, long long int>> result;
     for (const auto &[d1, d2]:pairs) {
       if (MINUS_FLAG) {
         /* ax+c=-d1, ay+b=d2 */
         if ((-d1-c)%a==0 && (d2-b)%a==0) 
-          result.push_back({(-d1-c)/a, (d2-b)/a});
+          result.insert({(-d1-c)/a, (d2-b)/a});
 
         /* ax+c=-d2, ay+b=d1 */
         if ((-d2-c)%a==0 && (d1-b)%a==0) 
-          result.push_back({(-d2-c)/a, (d1-b)/a});
+          result.insert({(-d2-c)/a, (d1-b)/a});
 
         /* ax+c=d1, ay+b=-d2 */
         if ((d1-c)%a==0 && (-d2-b)%a==0) 
-          result.push_back({(d1-c)/a, (-d2-b)/a});
+          result.insert({(d1-c)/a, (-d2-b)/a});
 
         /* ax+c=d2, ay+b=-d1 */
         if ((d2-c)%a==0 && (-d1-b)%a==0) 
-          result.push_back({(d2-c)/a, (-d1-b)/a});
+          result.insert({(d2-c)/a, (-d1-b)/a});
       }
       else {
         /* ax+c=d1, ay+b=d2 */
         if ((d1-c)%a==0 && (d2-b)%a==0) 
-          result.push_back({(d1-c)/a, (d2-b)/a});
+          result.insert({(d1-c)/a, (d2-b)/a});
   
         /* ax+c=d2, ay+b=d1 */
         if ((d2-c)%a==0 && (d1-b)%a==0) 
-          result.push_back({(d2-c)/a, (d1-b)/a});
+          result.insert({(d2-c)/a, (d1-b)/a});
         
         /* ax+c=-d1, ay+b=-d2 */
         if ((-d1-c)%a==0 && (-d2-b)%a==0) 
-          result.push_back({(-d1-c)/a, (-d2-b)/a});
+          result.insert({(-d1-c)/a, (-d2-b)/a});
         
         /* ax+c=-d2, ay+b=-d1 */
         if ((-d2-c)%a==0 && (-d1-b)%a==0) 
-          result.push_back({(-d2-c)/a, (-d1-b)/a});
+          result.insert({(-d2-c)/a, (-d1-b)/a});
       }
     }
 
-    std::sort(result.begin(), result.end());
     std::cout << result.size() << '\n';
     for (auto &p:result) {
       std::cout << p.first << ' ' << p.second << '\n';
     }
   }
-
   return 0;
 }
