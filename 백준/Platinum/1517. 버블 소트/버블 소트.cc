@@ -4,7 +4,6 @@
 #include <vector>
 #include <algorithm>
 #include <cassert>
-#include <unordered_map>
 
 #ifndef FASTIO_HPP
 #define FASTIO_HPP
@@ -49,22 +48,43 @@ namespace fastio
 
 #endif
 
-class Fenwick
+class _1517
 {
   int n;
-  std::vector<long long int> tree;
+  std::vector<int> &v;
+  long long int inversion_cnt=0;
+
+  void merge_sort(int l, int r) {
+    if (l>=r) return;
+
+    int mid=(l+r)>>1;
+    merge_sort(l, mid); merge_sort(mid+1, r);
+
+    std::vector<int> tmp;
+    tmp.reserve(r-l+1);
+    
+    int left_i=l, right_i=mid+1;
+    while (left_i<=mid || right_i<=r) {
+      if (left_i>mid) tmp.push_back(v[right_i++]);
+      else if (right_i>r || v[left_i]<=v[right_i]) tmp.push_back(v[left_i++]);
+      else {
+        tmp.push_back(v[right_i++]);
+        inversion_cnt+=mid-left_i+1;
+      }
+    }
+    assert(tmp.size()==r-l+1);
+    for (int i=l;i<=r;++i) {
+      v[i]=tmp[i-l];
+    }
+    return;
+  }
 
 public:
-  Fenwick(int n): n(n) {
-    tree.assign(n+1, 0);
-  }
-  void insert(int x) {
-    for (int i=x;i<=n;i+=i&-i) ++tree[i];
-  }
-  long long int query(int x) {
-    long long int sum=0LL;
-    for (int i=x;i>0;i-=i&-i) sum+=tree[i];
-    return sum;
+  _1517(int n, std::vector<int>& v): n(n), v(v) {}
+
+  long long int result() {
+    merge_sort(0, n-1);
+    return inversion_cnt;
   }
 };
 
@@ -80,29 +100,9 @@ int main()
   std::vector<int> v(n);
   for (int i=0;i<n;++i) read(v[i]);
 
-  /* a: compressed vector */
-  std::vector<int> a=v;
-  std::sort(v.begin(), v.end());
-  
-  std::unordered_map<int, int> map;
-  for (int i=0;i<n;++i) {
-    if (map.find(v[i])==map.end()) map[v[i]]=i+1;
-  }
+  _1517 x(n, v);
+  std::cout << x.result();
 
-  std::unordered_map<int, int> multiple;
-  for (int &i:a) {
-    if (++multiple[i]>1) i=map[i]+multiple[i]-1;
-    else i=map[i];
-  } 
-
-  Fenwick f(n);
-  
-  long long int cnt=0LL;
-  for (int i=n-1;i>=0;--i) {
-    cnt+=f.query(a[i]-1);
-    f.insert(a[i]);
-  }
-  std::cout << cnt;
  
   return 0;
 }
