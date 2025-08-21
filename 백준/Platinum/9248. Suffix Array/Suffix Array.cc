@@ -1,124 +1,226 @@
-// 9248 
+// 9248
 
 #include <iostream>
 #include <vector>
-#include <string>
 #include <algorithm>
+#include <cassert>
+#include <array>
 
-struct Suffix
+#ifndef FASTIO_HPP
+#define FASTIO_HPP
+
+#include <cstdio>
+#include <string>
+#include <cmath>
+#include <type_traits>
+
+namespace fastio
 {
-  int index;
-  int rank[2];
-
-  bool operator<(const Suffix& other) {
-    return (rank[0]==other.rank[0])? rank[1]<other.rank[1] : rank[0]<other.rank[0];
-  }
-};
-
-void print_vectors(const std::vector<Suffix>& suffixes, const std::string& s, int k=-1)
-{
-  std::cout << "i\t\tleft-rank\t\tright-rank\t\tindex\t\tsub-string\n\n";
-  for (int i=0;i<suffixes.size();++i) {
-    std::cout << i << "\t\t\t" << suffixes[i].rank[0] << "\t\t\t\t" << suffixes[i].rank[1] << "\t\t\t" << suffixes[i].index << "\t\t\t";
-    std::string substr;
-    if (k==-1 || suffixes[i].index+k>=s.size()) substr = s.substr(suffixes[i].index);
-    else substr = s.substr(suffixes[i].index, k);
-    std::cout << substr << '\n';
-  }
-  std::cout << "----------------------------------------------------------------" << std::endl;
-}
-
-std::vector<int> suffix_array(const std::string& s)
-{
-  int n=s.size();
-  std::vector<Suffix> suffixes(n);
-  std::vector<int> rank(n);
+  #define INPUT_BUFFER_SIZE (1<<20)
+  #define OUTPUT_BUFFER_SIZE (1<<20)
   
-  for (int i=0;i<n;++i) {
-    suffixes[i].index = i;
-    suffixes[i].rank[0] = s[i];
-    suffixes[i].rank[1] = (i+1<=n)? s[i+1] : 0;
+  /* INPUT */
+  char get()
+  {
+    static char buf[INPUT_BUFFER_SIZE], *S=buf, *T=buf;
+    if (S==T) {
+      T=(S=buf)+fread(buf, 1, INPUT_BUFFER_SIZE, stdin);
+      if (S==T) return EOF;
+    }
+    return *S++;
   }
-
-  // print_vectors(suffixes, s, 2);
-  std::sort(suffixes.begin(), suffixes.end());
-  // print_vectors(suffixes, s, 2);
-  
-  auto make_rank = [&] () {
-    int r=1;
-    rank[suffixes[0].index] = r;
-    for (int i=1;i<n;++i) {
-      if (suffixes[i].rank[0]!=suffixes[i-1].rank[0] || suffixes[i].rank[1]!=suffixes[i-1].rank[1]) {
-        ++r;
+  void read(int &x)
+  {
+    static char c; x=0;
+    bool MINUS_FLAG=0;
+    for (c=get();(c<'0'||c>'9')&&c!='-';c=get());
+    if (c=='-') {MINUS_FLAG=1;c=get();}
+    for (;c>='0'&&c<='9';c=get()) x=x*10+(c-'0');
+    if (MINUS_FLAG) x*=-1;
+  }
+  void read(long long int &x)
+  {
+    static char c; x=0;
+    bool MINUS_FLAG=0;
+    for (c=get();(c<'0'||c>'9')&&c!='-';c=get());
+    if (c=='-') {MINUS_FLAG=1;c=get();}
+    for (;c>='0'&&c<='9';c=get()) x=x*10+(c-'0');
+    if (MINUS_FLAG) x*=-1;
+  }
+  void read(std::string &s, int size=0)
+  {
+    static char c; s="";
+    if (size) s.reserve(size);
+    for (c=get();c<'!';c=get());
+    for (;c>='!';c=get()) s+=c;
+  }
+  void read(long double &ld) 
+  {
+    static char c; ld=0.0L;
+    bool MINUS_FLAG=0;
+    for (c=get();(c<'0'||c>'9')&&c!='-';c=get());
+    if (c=='-') {MINUS_FLAG=1;c=get();}
+    for (;c>='0'&&c<='9';c=get()) ld=ld*10+(c-'0');
+    if (c=='.') {
+      long double t=1.0L;
+      for (c=get();c>='0'&&c<='9';c=get()) {
+        t/=10;
+        ld+=t*(c-'0');
       }
-      rank[suffixes[i].index] = r;
     }
-  };
-
-  for (int k=2;k<=n;k<<=1) {
-    make_rank();
-    for (int i=0;i<n;++i) {
-      suffixes[i].rank[0] = rank[i];
-      suffixes[i].rank[1] = (i+k<n)? rank[i+k]: 0;
-      suffixes[i].index = i; 
-    }
-    std::sort(suffixes.begin(), suffixes.end());
-    // print_vectors(suffixes, s, k*2);
+    if (MINUS_FLAG) ld*=-1.0L;
+  }
+  void readline(std::string &s, int size=0)
+  {
+    static char c; s="";
+    if (size) s.reserve(size);
+    for (c=get();c!='\n'&&c!=EOF;c=get()) s+=c;
   }
 
-  
-  std::vector<int> result(n);
-  for (int i=0;i<n;++i) {
-    result[i] = suffixes[i].index;
+  /* OUTPUT */
+  char obuf[OUTPUT_BUFFER_SIZE];
+  int opos=0;
+  inline void flush() 
+  {
+    fwrite(obuf, 1, opos, stdout);
+    opos=0;
   }
-
-  return result;
+  inline void put(char c)
+  {
+    if (opos==OUTPUT_BUFFER_SIZE) flush();
+    obuf[opos++]=c;
+  }
+  void write(int x)
+  {
+    if (x==0) return put('0');
+    char tmp[11]; int len=0;
+    if (x<0) {put('-');x*=-1;}
+    while (x) {tmp[len++]='0'+(x%10); x/=10;}
+    while (len--) put(tmp[len]);
+  }
+  void write(size_t x)
+  {
+    if (x==0) return put('0');
+    char tmp[12]; int len=0;
+    while (x) {tmp[len++]='0'+(x%10); x/=10;}
+    while (len--) put(tmp[len]);
+  }
+  void write(long long int x)
+  {
+    if (x==0) return put('0');
+    char tmp[20]; int len=0;
+    if (x<0) {put('-');x*=-1;}
+    while (x) {tmp[len++]='0'+(x%10); x/=10;}
+    while (len--) put(tmp[len]);
+  }
+  void write(long double x, size_t precision=3)
+  {
+    if (x<0) {put('-');x*=-1.0L;}
+    if (precision==0) {
+      return write(static_cast<long long int>(std::round(x)));
+    }
+    long long int int_part=static_cast<long long int>(x);
+    write(int_part);
+    x-=int_part;
+    put('.');
+    x=std::round(x*std::pow(10, precision));
+    if (x==0) for (size_t i=0;i<precision;++i) put('0');
+    else write(static_cast<long long int>(x));
+  }
+  inline void write(const std::string &s)
+  {
+    for (const char& c:s) put(c);
+  }
+  inline void write(const char *s)
+  {
+    while (*s) put(*s++);
+  }
+  inline void write(const char &c) 
+  {
+    put(c);
+  }
+  inline void write(const bool &b)
+  {
+    if (b) put('1');
+    else put('0');
+  }
+  template <typename T>
+  inline typename std::enable_if<std::is_same<T, long double>::value>::type writeln(T x, size_t precision=3)
+  {
+    write(x, precision);
+    put('\n');
+  }
+  template <typename T>
+  inline typename std::enable_if<!std::is_same<T, long double>::value>::type writeln(T x)
+  {
+    write(x);
+    put('\n');
+  }
+  struct FASTIO_FLUSHER
+  {
+    ~FASTIO_FLUSHER() {flush();}
+  } fastio_flusher;
 }
 
-
-std::vector<int> LCP(const std::vector<int>& sa, const std::string& s)
+#endif
+int main() 
 {
+  std::ios_base::sync_with_stdio(false);
+  std::cin.tie(nullptr); 
+  std::cout.tie(nullptr);
+
+  using namespace fastio;
+  std::string s;  read(s);
+
   int n=s.size();
-  std::vector<int> rank(n), lcp(n-1);
+  std::vector<int> sa(n, -1);
+  std::vector<int> rank(n+1, 0);
+  rank.back()=-1;
 
   for (int i=0;i<n;++i) {
-    rank[sa[i]] = i;
+    sa[i]=i;
+    rank[i]=s[i]-'a';
   }
-  // std::cout << "RANK: ";
-  // for (int i: rank) std::cout << i << ' ';
-  // std::cout << std::endl;
 
-  int k=0;
-  // std::cout << "FOR LOOP:";
+  int t=1;
+  while (t<n) {
+    std::sort(sa.begin(), sa.end(), 
+      [&rank, &t, &n] (const int &a, const int &b) {
+        if (rank[a]!=rank[b]) return rank[a]<rank[b];
+        return rank[std::min(a+t, n)]<rank[std::min(b+t, n)];
+      });
+
+    std::vector<int> new_rank(n+1, 0);
+    new_rank.back()=-1;
+
+    for (int i=1;i<n;++i) {
+      if (rank[sa[i-1]]!=rank[sa[i]] || rank[std::min(sa[i-1]+t, n)]!=rank[std::min(sa[i]+t, n)]) {
+        new_rank[sa[i]]=new_rank[sa[i-1]]+1;
+      }
+      else {
+        new_rank[sa[i]]=new_rank[sa[i-1]];
+      }
+    }
+    rank=new_rank;
+
+    if (rank[n-1]==n-1) break;
+    t<<=1;
+  }
+
+  std::vector<int> height(n, 0);
+  int h=0;
   for (int i=0;i<n;++i) {
-    // std::cout << "\n\ti=" << i << ", rank[i]=" << rank[i] << "\n\tsuffix: " << s.substr(sa[rank[i]]) << std::endl;
     if (rank[i]>0) {
-      int j = sa[rank[i]-1];
-      // std::cout << "\tPrevious suffix: " << s.substr(j) << std::endl;
-      int m = std::max(i, j);
-      // std::cout << "\t(i, j) = (" << i << ", " << j << ')' << std::endl;
-      while (m+k<n && s[i+k]==s[j+k])  ++k;
-      lcp[rank[i]-1]=k;
-      if (k>0) --k;
+      int j=sa[rank[i]-1];
+      while (s[i+h]==s[j+h]) ++h;
+      height[rank[i]]=h;
+      if (h) --h;
     }
   }
-  return lcp;
-}
 
-int main() {
-  std::ios_base::sync_with_stdio(false);
-  std::cin.tie(nullptr);
-
-  std::string str;  std::cin >> str;
-  std::vector<int> sa = suffix_array(str);
-
-  for (const int& i: sa) {
-    std::cout << i+1 << ' ';
-  }
-  std::cout << '\n' << 'x' << ' ';
-  for (const int& i: LCP(sa, str)) {
-    std::cout << i << ' ';
-  }
-
+  for (int &i:sa) write(i+1), write(' ');
+  write("\nx ");
+  for (int i=1;i<n;++i) write(height[i]), write(' ');
   return 0;
 }
+
