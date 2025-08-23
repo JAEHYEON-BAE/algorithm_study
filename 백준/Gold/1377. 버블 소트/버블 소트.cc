@@ -4,11 +4,10 @@
 #include <vector>
 #include <algorithm>
 #include <cassert>
-#include <unordered_map>
-
-#define INPUT_BUFFER_SIZE (1<<20)
 
 /* INPUT */
+#define INPUT_BUFFER_SIZE (1<<20)
+
 char get()
 {
   static char buf[INPUT_BUFFER_SIZE], *S=buf, *T=buf;
@@ -41,14 +40,14 @@ int main()
 
   auto cpy=v;
   std::sort(cpy.begin(), cpy.end());
-  std::unordered_map<int, int> map;
+  std::vector<int> map(1'000'001, -1);
   int id=0;
   for (const int &i:cpy) {
-    if (map.count(i)) ++id;
+    if (map[i]!=-1) ++id;
     else map[i]=id++;
   }
 
-  std::unordered_map<int, int> cnt;
+  std::vector<int> cnt(1'000'001, 0);
   for (int &i:v) {
     ++cnt[i];
     if (cnt[i]==1) i=map[i];
