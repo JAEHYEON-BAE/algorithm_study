@@ -1,23 +1,21 @@
-// 19805
+// 6109
 
 #include <iostream>
 #include <vector>
 #include <algorithm>
 #include <cassert>
 
-int cnt(int n, int idx, const std::vector<int> &c)
+int DP(int idx, int n, std::vector<std::vector<int>> &dp, const std::vector<int> &v)
 {
-  if (n==0) return 1;
-  if (idx>=c.size()) return 0;
-  int res=0;
-  for (int i=idx;i<c.size();++i) {
-    int prev=c[i];
-    while (prev<=n) {
-      res+=cnt(n-prev, i+1, c);
-      prev+=c[i];
-    }
-  }
-  return res;
+  if (idx>=v.size()) return 0;
+  int &tmp=dp[idx][n];
+  if (tmp!=-1) return tmp;
+
+  tmp=0;
+  int k=n/v[idx];
+  for (int i=0;i<=k;++i) tmp+=DP(idx+1, n-i*v[idx], dp, v);
+ 
+  return tmp;
 }
 
 int main() 
@@ -30,7 +28,14 @@ int main()
   std::vector<int> v(c);
   for (int &i:v) std::cin >> i;
 
-  std::cout << cnt(n, 0, v);
+  std::vector<std::vector<int>> dp(c, std::vector<int>(n+1, -1));
+
+  for (int i=0;i<c;++i) dp[i][0]=1;
+  for (int i=1;v.back()*i<=n;++i) dp[c-1][v.back()*i]=1;
+  
+  std::cout << DP(0, n, dp, v);
+
+
   return 0;
 }
 
