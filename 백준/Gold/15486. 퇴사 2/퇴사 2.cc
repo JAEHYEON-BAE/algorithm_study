@@ -4,7 +4,6 @@
 #include <vector>
 #include <algorithm>
 #include <cassert>
-#include <array>
 
 /* DEFINE FASTIO */
 namespace fastio
@@ -41,17 +40,16 @@ int main()
 
   int n; fastio::read(n);
   
-  std::vector<int> t(n), p(n);
-  for (int i=0;i<n;++i) {
-    fastio::read(t[i]), fastio::read(p[i]);
-  }
-
-  std::vector<int> dp(n+1, 0);
-  for (int i=n-1;i>=0;--i) {
-    if (i+t[i]>n) dp[i]=dp[i+1];
-    else dp[i]=std::max(dp[i+1], dp[i+t[i]]+p[i]);
-  }
-  std::cout << dp[0];
+  std::vector<int> dp(n+2, 0);
   
+  int t, p;
+  for (int i=1;i<=n;++i) {
+    fastio::read(t), fastio::read(p);
+    dp[i]=std::max(dp[i], dp[i-1]);
+    if (i+t<=n+1) dp[i+t]=std::max(dp[i+t], dp[i]+p);
+  }
+  dp[n+1]=std::max(dp[n+1], dp[n]);
+  
+  std::cout << dp[n+1];
   return 0;
 }
