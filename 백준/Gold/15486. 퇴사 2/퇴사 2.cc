@@ -33,33 +33,6 @@ namespace fastio
 }
 /* END FASTIO */
 
-class _15486
-{
-  const int &n;
-  const std::vector<int> &times, &pay;
-  std::vector<int> dp;
-
-  int DP(int i) {
-    if (i==n) return 0;
-    else if (dp[i]!=-1) return dp[i];
-    else if (times[i]==1) return dp[i]=DP(i+1)+pay[i];
-    else if (i+times[i]>n) {
-      if (i+1<n) return dp[i]=DP(i+1);
-      else return dp[i]=0;
-    }  
-    else return dp[i]=std::max(DP(i+1), DP(i+times[i])+pay[i]);
-  }
-
-public:
-  _15486(const int &n, const std::vector<int> &times, const std::vector<int> &pay): n(n), times(times), pay(pay) {
-    dp.assign(n, -1);
-  }
-
-  int result() {
-    return DP(0);
-  }
-};
-
 int main() 
 {
   std::ios_base::sync_with_stdio(false);
@@ -72,9 +45,13 @@ int main()
   for (int i=0;i<n;++i) {
     fastio::read(t[i]), fastio::read(p[i]);
   }
-  _15486 x(n, t, p);
-  std::cout << x.result();
+
+  std::vector<int> dp(n+1, 0);
+  for (int i=n-1;i>=0;--i) {
+    if (i+t[i]>n) dp[i]=dp[i+1];
+    else dp[i]=std::max(dp[i+1], dp[i+t[i]]+p[i]);
+  }
+  std::cout << dp[0];
   
   return 0;
 }
-
