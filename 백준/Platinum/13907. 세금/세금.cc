@@ -50,13 +50,15 @@ int main()
   std::vector<std::vector<int>> dist(n, std::vector<int>(n, INF));
 
   // 변형 dijkstra
-  std::priority_queue<Node> pq;
+  // std::priority_queue<Node> pq;
+  std::queue<Node> q;
+  std::vector<int> min_dist(n, INF);
 
   dist[s][0]=0;
-  pq.push(Node(s, 0, 0));
-  while (!pq.empty()) {
-    auto [curr, cost, length]=pq.top();
-    pq.pop();
+  q.push(Node(s, 0, 0));
+  while (!q.empty()) {
+    auto [curr, cost, length]=q.front();
+    q.pop();
 
     if (length>=n || dist[curr][length]<cost) continue;
 
@@ -65,9 +67,11 @@ int main()
       int cost_n=cost+e.cost;
       int length_n=length+1;
       if (length_n>=n) continue;
+      if (min_dist[next]<=cost_n) continue;
       if (dist[next][length_n]>cost_n) {
         dist[next][length_n]=cost_n;
-        pq.push(Node(next, cost_n, length_n));
+        min_dist[next]=std::min(min_dist[next], cost_n);
+        q.push(Node(next, cost_n, length_n));
       }
     }
   }
