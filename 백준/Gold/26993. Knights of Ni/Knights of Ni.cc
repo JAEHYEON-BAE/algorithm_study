@@ -9,6 +9,28 @@
 
 #define DEBUG(x) std::cerr << #x << " = " << x << std::endl;
 
+/* INPUT */
+#define INPUT_BUFFER_SIZE (1<<20)
+
+char get()
+{
+  static char buf[INPUT_BUFFER_SIZE], *S=buf, *T=buf;
+  if (S==T) {
+    T=(S=buf)+fread(buf, 1, INPUT_BUFFER_SIZE, stdin);
+    if (S==T) return EOF;
+  }
+  return *S++;
+}
+void read(int &x)
+{
+  static char c; x=0;
+  bool MINUS_FLAG=0;
+  for (c=get();(c<'0'||c>'9')&&c!='-';c=get());
+  if (c=='-') {MINUS_FLAG=1;c=get();}
+  for (;c>='0'&&c<='9';c=get()) x=x*10+(c-'0');
+  if (MINUS_FLAG) x*=-1;
+}
+
 constexpr int dr[4]={-1, 0, 1, 0};
 constexpr int dc[4]={0, 1, 0, -1};
 
@@ -28,13 +50,13 @@ int main()
   std::cin.tie(nullptr); 
   std::cout.tie(nullptr);
 
-  int w, h;  std::cin >> w >> h;
+  int w, h;  read(w), read(h);
   std::vector<std::vector<int>> board(h, std::vector<int>(w));
 
   std::pair<int, int> s, e;
   std::unordered_map<std::pair<int, int>, int> from_s, from_e;
   for (int i=0;i<h;++i) for (int j=0;j<w;++j) {
-    std::cin >> board[i][j];
+    read(board[i][j]);
     if (board[i][j]==2) s={i, j};
     else if (board[i][j]==3) e={i, j};
     else if (board[i][j]==4) {
