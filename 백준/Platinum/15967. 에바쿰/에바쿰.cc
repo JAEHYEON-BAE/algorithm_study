@@ -59,7 +59,7 @@ class SegTree
   void _update(int idx, int node, int s, int e, ll d) {
     if (idx<s || idx>e) return;
     tree[node]+=d;
-    if (s<=e) return;
+    if (s==e) return;
     int mid=(s+e)>>1;
     if (idx<=mid) _update(idx, node<<1, s, mid, d);
     else _update(idx, 1|node<<1, mid+1, e, d);
@@ -89,7 +89,7 @@ class SegTree
     int mid=(s+e)>>1;
     _update(l, r, node<<1, s, mid, d);
     _update(l, r, 1|node<<1, mid+1, e, d);
-    tree[node]+=tree[node<<1]+tree[1|node<<1];
+    tree[node]=tree[node<<1]+tree[1|node<<1];
   }
   ll _query(int l, int r, int node, int s, int e) {
     // std::cerr << "QUERY: " << l << '\t' << r << std::endl;
