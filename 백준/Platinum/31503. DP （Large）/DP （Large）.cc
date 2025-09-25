@@ -9,6 +9,56 @@
 
 #define DEBUG(x) std::cerr << #x << " = " << x << std::endl;
 
+/* INPUT */
+#define INPUT_BUFFER_SIZE (1<<20)
+
+char get()
+{
+  static char buf[INPUT_BUFFER_SIZE], *S=buf, *T=buf;
+  if (S==T) {
+    T=(S=buf)+fread(buf, 1, INPUT_BUFFER_SIZE, stdin);
+    if (S==T) return EOF;
+  }
+  return *S++;
+}
+void read(int &x)
+{
+  static char c; x=0;
+  bool MINUS_FLAG=0;
+  for (c=get();(c<'0'||c>'9')&&c!='-';c=get());
+  if (c=='-') {MINUS_FLAG=1;c=get();}
+  for (;c>='0'&&c<='9';c=get()) x=x*10+(c-'0');
+  if (MINUS_FLAG) x*=-1;
+}
+
+/* OUTPUT */
+#define OUTPUT_BUFFER_SIZE (1<<20)
+
+char obuf[OUTPUT_BUFFER_SIZE];
+int opos=0;
+inline void flush() 
+{
+  fwrite(obuf, 1, opos, stdout);
+  opos=0;
+}
+inline void put(char c)
+{
+  if (opos==OUTPUT_BUFFER_SIZE) flush();
+  obuf[opos++]=c;
+}
+void write(int x)
+{
+  if (x==0) return put('0');
+  char tmp[11]; int len=0;
+  if (x<0) {put('-');x*=-1;}
+  while (x) {tmp[len++]='0'+(x%10); x/=10;}
+  while (len--) put(tmp[len]);
+}
+struct FASTIO_FLUSHER
+{
+  ~FASTIO_FLUSHER() {flush();}
+} fastio_flusher;
+
 struct Fenwick
 {
   int n;
@@ -38,11 +88,11 @@ int main()
   std::cin.tie(nullptr); 
   std::cout.tie(nullptr);
 
-  int n, q;  std::cin >> n >> q;
+  int n, q;  read(n), read(q);
   std::vector<int> d(n);
   std::set<int> set;
   for (int &x:d) {
-    std::cin >> x;
+    read(x);
     set.insert(x);
   }
 
@@ -68,8 +118,9 @@ int main()
   }
   
   while (q--) {
-    int a;  std::cin >> a;  --a;
-    std::cout << l[a]+r[a]-1 << '\n';
+    int a;  read(a);  --a;
+    write(l[a]+r[a]-1);
+    put('\n');
   }
   
   return 0;
