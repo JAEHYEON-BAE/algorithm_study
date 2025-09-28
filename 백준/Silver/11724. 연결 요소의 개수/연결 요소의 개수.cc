@@ -4,9 +4,37 @@
 #include <vector>
 #include <algorithm>
 #include <cassert>
-#include <queue>
+#include <unordered_set>
 
 #define DEBUG(x) std::cerr << #x << " = " << x << std::endl;
+
+class DSU
+{
+  int n;
+  std::vector<int> root, rank;
+
+
+public:
+  DSU(int n): n(n), root(n), rank(n, 0) {
+    for (int i=0;i<n;++i) root[i]=i;
+  }
+
+  int find(int x) {
+    if (x==root[x]) return x;
+    return root[x]=find(root[x]);
+  }
+  void unite(int x, int y) {
+    x=find(x), y=find(y);
+    if (x==y) return;
+
+    if (rank[x]>rank[y]) root[y]=x;
+    else if (rank[x]<rank[y]) root[x]=y;
+    else {
+      root[x]=y;
+      ++rank[y];
+    }
+  }
+};
 
 int main() 
 {
@@ -15,38 +43,15 @@ int main()
   std::cout.tie(nullptr);
 
   int n, m;  std::cin >> n >> m;
-  std::vector<std::vector<int>> G(n);
+  DSU dsu(n);
   for (int i=0;i<m;++i) {
     int u, v;  std::cin >> u >> v;
     --u;--v;
-    G[u].push_back(v);
-    G[v].push_back(u);
+    dsu.unite(u, v);
   }
 
-  std::vector<bool> visited(n, 0);
-  int cnt=0;
-  while (1) {
-    int s=-1;
-    for (int i=0;i<n;++i) if (!visited[i]) {
-      s=i; break;
-    }
-    if (s==-1) break;
-
-    std::queue<int> q;
-      
-    q.push(s);
-    visited[s]=1;
-    
-    while (!q.empty()) {
-      int curr=q.front();
-      q.pop();
-      for (const int &next:G[curr]) if (!visited[next]) {
-        q.push(next);
-        visited[next]=1;
-      }
-    }
-    ++cnt;
-  }
-  std::cout << cnt;
+  std::unordered_set<int> s;
+  for (int i=0;i<n;++i) s.insert(dsu.find(i));
+  std::cout << s.size();
   return 0;
 }
