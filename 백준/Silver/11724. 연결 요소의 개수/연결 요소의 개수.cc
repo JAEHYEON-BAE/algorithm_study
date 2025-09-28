@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <cassert>
 #include <unordered_set>
+#include <set>
 
 #define DEBUG(x) std::cerr << #x << " = " << x << std::endl;
 
@@ -50,7 +51,7 @@ int main()
     dsu.unite(u, v);
   }
 
-  std::unordered_set<int> s;
+  std::set<int> s;
   for (int i=0;i<n;++i) s.insert(dsu.find(i));
   std::cout << s.size();
   return 0;
