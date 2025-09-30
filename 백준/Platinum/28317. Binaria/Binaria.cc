@@ -10,6 +10,30 @@
 
 using ll=long long int;
 constexpr ll MOD=1'000'003;
+
+/* INPUT */
+#define INPUT_BUFFER_SIZE (1<<20)
+
+char get()
+{
+  static char buf[INPUT_BUFFER_SIZE], *S=buf, *T=buf;
+  if (S==T) {
+    T=(S=buf)+fread(buf, 1, INPUT_BUFFER_SIZE, stdin);
+    if (S==T) return EOF;
+  }
+  return *S++;
+}
+void read(int &x)
+{
+  static char c; x=0;
+  bool MINUS_FLAG=0;
+  for (c=get();(c<'0'||c>'9')&&c!='-';c=get());
+  if (c=='-') {MINUS_FLAG=1;c=get();}
+  for (;c>='0'&&c<='9';c=get()) x=x*10+(c-'0');
+  if (MINUS_FLAG) x*=-1;
+}
+
+
 std::vector<ll> fact;
 void init(int k)
 {
@@ -49,7 +73,7 @@ int main()
   std::cin.tie(nullptr); 
   std::cout.tie(nullptr);
 
-  int n, k;  std::cin >> n >> k;
+  int n, k;  read(n), read(k);
   init(k);
 
   int m=n-k+1;
@@ -59,7 +83,7 @@ int main()
   // S[i+k] = S[i]+d[i]
   std::vector<int> d(m-1);
   for (int i=0;i<m;++i) {
-    std::cin >> a[i];
+    read(a[i]);
     if (a[i]>k) {std::cout << '0'; return 0;}
     if (i) {
       d[i-1]=a[i]-a[i-1];
