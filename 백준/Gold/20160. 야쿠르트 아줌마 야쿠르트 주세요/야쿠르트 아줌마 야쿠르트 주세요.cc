@@ -11,6 +11,28 @@
 using ll=long long int;
 constexpr int INF=(~0u)>>2;
 
+/* INPUT */
+#define INPUT_BUFFER_SIZE (1<<20)
+
+char get()
+{
+  static char buf[INPUT_BUFFER_SIZE], *S=buf, *T=buf;
+  if (S==T) {
+    T=(S=buf)+fread(buf, 1, INPUT_BUFFER_SIZE, stdin);
+    if (S==T) return EOF;
+  }
+  return *S++;
+}
+void read(int &x)
+{
+  static char c; x=0;
+  bool MINUS_FLAG=0;
+  for (c=get();(c<'0'||c>'9')&&c!='-';c=get());
+  if (c=='-') {MINUS_FLAG=1;c=get();}
+  for (;c>='0'&&c<='9';c=get()) x=x*10+(c-'0');
+  if (MINUS_FLAG) x*=-1;
+}
+
 struct Edge
 {
   int to, w;
@@ -24,20 +46,20 @@ int main()
   std::cin.tie(nullptr); 
   std::cout.tie(nullptr);
 
-  int v, e;  std::cin >> v >> e;
+  int v, e;  read(v), read(e);
   std::vector<std::vector<Edge>> G(v);
   for (int _=0;_<e;++_) {
-    int u, v, w;  std::cin >> u >> v >> w;
+    int u, v, w;  read(u), read(v), read(w);
     --u, --v;
     G[u].push_back(Edge(v, w));
     G[v].push_back(Edge(u, w));
   }
 
   std::vector<ll> ytime(v, -1);
-  int prev;  std::cin >> prev;  --prev;
+  int prev;  read(prev);  --prev;
   ytime[prev]=0;
   for (int i=0;i<9;++i) {
-    int curr;  std::cin >> curr;  --curr;
+    int curr;  read(curr);  --curr;
     
     std::priority_queue<std::pair<ll, int>, std::vector<std::pair<ll, int>>, std::greater<>> pq;
     std::vector<ll> dist(v, INF);
@@ -64,7 +86,7 @@ int main()
     else continue;
   }
 
-  int s;  std::cin >> s;  --s;
+  int s;  read(s);  --s;
   
   std::priority_queue<std::pair<int, int>, std::vector<std::pair<int, int>>, std::greater<>> pq;
   std::vector<int> dist(v, INF);
