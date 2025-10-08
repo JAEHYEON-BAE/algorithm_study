@@ -68,21 +68,18 @@ int main()
 
 
   long long int res=0LL;
-  std::sort(1+dist.begin(), dist.end());
+  std::sort(dist.begin(), dist.end());
   int prev=0;
   long long int cnt=0;
-  for (int i=1;i<n;++i) {
-    const int &d=dist[i];
+  for (const int &d:dist) {
     if (d==prev) ++cnt;
     else {
       res+=cnt*(cnt-1)/2;
-      if (!prev) res+=cnt;
       prev=d;
       cnt=1;
     }
   }
   res+=cnt*(cnt-1)/2;
-  if (!prev) res+=cnt;
 
   std::cout << res;
   return 0;
