@@ -4,7 +4,7 @@
 #include <vector>
 #include <algorithm>
 #include <cassert>
-#include <unordered_set>
+#include <set>
 
 #define DEBUG(x) std::cerr << #x << " = " << x << std::endl;
 
@@ -20,7 +20,7 @@ int main()
   G[1]=0;
   G[2]=1;
   for (int i=3;i<=n;++i) {
-    std::unordered_set<int> s;
+    std::set<int> s;
     s.insert(G[i-2]);
     for (int j=1;j<=i-j-2;++j) s.insert(G[j]^G[i-j-2]);
     int tmp=0;
