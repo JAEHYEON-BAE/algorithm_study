@@ -41,6 +41,10 @@ void read(ll &x)
   for (;c>='0'&&c<='9';c=get()) x=x*10+(c-'0');
   if (MINUS_FLAG) x*=-1;
 }
+void read(char &c)
+{
+  for (c=get();c==' '||c=='\n';c=get());
+}
 void read(std::string &s, int size=0)
 {
   static char c; s="";
@@ -60,13 +64,13 @@ int main()
   ll dp=1;
   std::vector<ll> prev(26, 0LL);
   for (int i=0;i<n;++i) {
-    std::string c;  ll v;
+    char c;  ll v;
     read(c), read(v);
-    ll tmp=v*dp%MOD-(v-1LL)*prev[c[0]-'a']%MOD;
+    ll tmp=v*dp%MOD-(v-1LL)*prev[c-'a']%MOD;
     tmp=(tmp+MOD)%MOD;
-    dp=(v+1LL)*dp%MOD-v*prev[c[0]-'a']%MOD;
+    dp=(v+1LL)*dp%MOD-v*prev[c-'a']%MOD;
     dp=(dp+MOD)%MOD;
-    prev[c[0]-'a']=tmp;
+    prev[c-'a']=tmp;
   }
   std::cout << (dp-1+MOD)%MOD;
   return 0;
