@@ -4,7 +4,7 @@
 #include <vector>
 #include <algorithm>
 #include <cassert>
-#include <set>
+#include <queue>
 
 #define DEBUG(x) std::cerr << #x << " = " << x << std::endl;
 
@@ -15,21 +15,18 @@ int main()
   std::cout.tie(nullptr);
 
   int n, p;  std::cin >> n >> p;
-  std::multiset<int, std::greater<>> s;
-  for (int i=0;i<n;++i) {
-    int x; std::cin >> x;
-    s.insert(x);
+  std::priority_queue<int, std::vector<int>, std::greater<>> pq;
 
-    int tmp=p;
-    auto it=s.begin();
-    int cnt=0;
-    while (tmp>0 && it!=s.end()) {
-      tmp-=*it;
-      std::advance(it, 1);
-      ++cnt;
+  int sum=0;
+  for (int i=0;i<n;++i) {
+    int x;  std::cin >> x;
+    pq.push(x);
+    sum+=x;
+    while (!pq.empty() && sum-pq.top()>=p) {
+      sum-=pq.top();
+      pq.pop();
     }
-    if (tmp>0) std::cout << "-1 ";
-    else std::cout << cnt << ' ';
+    std::cout << (sum<p?-1:static_cast<int>(pq.size())) << ' ';
   }
   
   return 0;
