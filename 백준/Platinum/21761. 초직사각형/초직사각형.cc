@@ -7,20 +7,7 @@
 
 #define DEBUG(x) std::cerr << #x << " = " << x << std::endl;
 using ll=long long int;
-
-ll a[4];  
-
-struct Card
-{
-  int t;
-  ll u;
-  Card() {}
-  Card(int t, ll u): t(t), u(u) {}
-
-  bool operator<(const Card &o) const {
-    return static_cast<long double>(u)/static_cast<long double>(a[t]) < static_cast<long double>(o.u)/static_cast<long double>(a[o.t]);
-  }
-};
+using ld=long double;
 
 int main() 
 {
@@ -29,20 +16,23 @@ int main()
   std::cout.tie(nullptr);
 
   int n, k;  std::cin >> n >> k;
+  ll a[4];  
   std::cin >> a[0] >> a[1] >> a[2] >> a[3];
-  std::vector<Card> cards(n);
+  std::vector<std::vector<ll>> cards(4);
+  for (int i=0;i<4;++i) cards[i].push_back(0);
   for (int i=0;i<n;++i) {
-    char c;  std::cin >> c;
-    cards[i].t=(c-'A');
-    std::cin >> cards[i].u;
+    char t; ll u;  std::cin >> t >> u;
+    cards[t-'A'].push_back(u);
+  }
+  for (int i=0;i<4;++i) std::sort(cards[i].begin(), cards[i].end(), std::greater<ll>());
+  int it[4]={0, 0, 0, 0};
+  for (int i=0;i<k;++i) {
+    ld tmp[4]={(ld)cards[0][it[0]]/(ld)a[0], (ld)cards[1][it[1]]/(ld)a[1], (ld)cards[2][it[2]]/(ld)a[2], (ld)cards[3][it[3]]/(ld)a[3]};
+    int t=std::max_element(tmp, tmp+4)-tmp;
+    std::cout << (char)('A'+t) << ' ' << cards[t][it[t]] << '\n';
+    a[t]+=cards[t][it[t]];
+    ++it[t];
   }
 
-  for (int i=0;i<k;++i) {
-    Card &c=*std::max_element(cards.begin()+i, cards.end());
-    std::cout << static_cast<char>('A'+(c.t)) << ' ' << c.u << '\n';
-    a[c.t]+=c.u;
-    std::swap(c, cards[i]);
-  }
-  
   return 0;
 }
