@@ -123,12 +123,7 @@ int main()
     }
 
     std::vector<int> ans;
-    for (int i=0;i<x.scc_id;++i) if (out_degree[i]==0) {
-      for (const int &u:x.scc_group[i]) ans.push_back(u);
-    }
-
-    std::sort(ans.begin(), ans.end());
-    for (const int &u:ans) write(u+1), put(' ');
+    for (int i=0;i<n;++i) if (out_degree[x.scc[i]]==0) write(i+1), put(' ');
     put('\n');
   }
   flush();
