@@ -35,7 +35,11 @@ array<int, 2> roadwork(string s){
     }
 
     if (dp[i]<dp[i-1]) dp[i]=dp[i-1], cnt[i]=cnt[i-1];
-    else if (dp[i]==dp[i-1]) cnt[i]+=cnt[i-1], cnt[i]%=MOD;
+    else if (dp[i]==dp[i-1]) {
+      if (dp[i-1]==1) ++cnt[i];
+      else cnt[i]+=cnt[i-1];
+      cnt[i]%=MOD;
+    }
   }
 
   return {dp[n], static_cast<int>(cnt[n]%MOD)};
