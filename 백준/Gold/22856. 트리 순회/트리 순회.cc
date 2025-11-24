@@ -29,26 +29,6 @@ void read(int &x)
   if (MINUS_FLAG) x*=-1;
 }
 
-int DFS(int u, std::vector<int> &cnt, const std::vector<std::vector<int>> &G)
-{
-  for (const int &v:G[u]) if (v!=-1) {
-    cnt[u]+=1+DFS(v, cnt, G);
-  }
-  return cnt[u];
-}
-
-int solve(int u, const std::vector<int> &cnt, const std::vector<std::vector<int>> &G)
-{
-  int res=
-      ((G[u][0]!=-1)
-      ? 2*(1+cnt[G[u][0]])
-      : 0)
-  +   ((G[u][1]!=-1)
-      ?1+solve(G[u][1], cnt, G)
-      : 0);
-  // std::cout << u << ' ' << res << '\n';
-  return res;
-}
 
 int main() 
 {
@@ -59,15 +39,16 @@ int main()
   int n;  read(n);
   int a, b, c;
   std::vector<std::vector<int>> G(n+1, std::vector<int>(2, -1));
-  std::vector<int> cnt(n+1, 0);
 
   int res=0;
   for (int _=0;_<n;++_) {
     read(a), read(b), read(c);
     G[a][0]=b, G[a][1]=c;
   }
-  
-  DFS(1, cnt, G);
-  std::cout << solve(1, cnt, G);
+
+  int u=1, cnt=-1;
+  while (u!=-1) u=G[u][1], ++cnt;
+
+  std::cout << 2*(n-1)-cnt;
   return 0;
 }
