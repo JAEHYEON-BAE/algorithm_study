@@ -117,7 +117,7 @@ int main()
     * 
     * Therefore, use two Fenwick Tree: of D[j] and j*D[j]
     */
-  std::vector<Chain> chains(60, Chain(n+1));
+  std::vector<Chain> chains(60, Chain(n/60+2));
 
   for (int i=1;i<=n;++i) {
     ll x;  read(x);
