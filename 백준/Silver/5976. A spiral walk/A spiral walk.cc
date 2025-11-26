@@ -10,6 +10,30 @@
 constexpr int dr[4]={0, 1, 0, -1};
 constexpr int dc[4]={1, 0, -1, 0};
 
+/* OUTPUT */
+#define OUTPUT_BUFFER_SIZE (1<<20)
+
+char obuf[OUTPUT_BUFFER_SIZE];
+int opos=0;
+inline void flush() 
+{
+  fwrite(obuf, 1, opos, stdout);
+  opos=0;
+}
+inline void put(char c)
+{
+  if (opos==OUTPUT_BUFFER_SIZE) flush();
+  obuf[opos++]=c;
+}
+void write(int x)
+{
+  if (x==0) return put('0');
+  char tmp[11]; int len=0;
+  if (x<0) {put('-');x*=-1;}
+  while (x) {tmp[len++]='0'+(x%10); x/=10;}
+  while (len--) put(tmp[len]);
+}
+
 int main() 
 {
   std::ios_base::sync_with_stdio(false);
@@ -37,8 +61,9 @@ int main()
   }
 
   for (const auto &r:v) {
-    for (const int &x:r) std::cout << x << ' ';
-    std::cout << '\n';
+    for (const int &x:r) write(x), put(' ');
+    put('\n');
   }
+  flush();
   return 0;
 }
