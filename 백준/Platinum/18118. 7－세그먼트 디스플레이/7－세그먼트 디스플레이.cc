@@ -16,21 +16,27 @@ int main()
   int t;  std::cin >> t;
   while (t--) {
     int n, m;  std::cin >> n >> m;
-    std::vector<std::vector<ll>> dp(n, std::vector<ll>(m, -1));
-    for (int i=0;i<10;++i) dp[0][i%m]=i;
-    dp[0][11%m]=11;
+    // std::vector<std::vector<ll>> dp(n, std::vector<ll>(m, -1));
+    std::vector<ll> dp(m, -1), tmp(m, -1);
+    for (int i=0;i<10;++i) dp[i%m]=i;
+    dp[11%m]=11;
 
-    for (int k=0;k<n-1;++k) for (int r=0;r<m;++r) if (dp[k][r]!=-1) {
-      for (int i=0;i<10;++i) {
-        int nr=(10*r+i)%m;
-        dp[k+1][nr]=std::max(dp[k+1][nr], 10LL*dp[k][r]+i);
+    
+    for (int k=0;k<n-1;++k) {
+      std::fill(tmp.begin(), tmp.end(), -1);
+      for (int r=0;r<m;++r) if (dp[r]!=-1) {
+        for (int i=0;i<10;++i) {
+          int nr=(10*r+i)%m;
+          tmp[nr]=std::max(tmp[nr], 10LL*dp[r]+i);
+        }
+        int nr=(100*r+11)%m;
+        tmp[nr]=std::max(tmp[nr], 100LL*dp[r]+11);
       }
-      int nr=(100*r+11)%m;
-      dp[k+1][nr]=std::max(dp[k+1][nr], 100LL*dp[k][r]+11);
+      dp=tmp;
     }
 
-    if (dp[n-1][0]==-1) std::cout << "0\n";
-    else std::cout << dp[n-1][0] << '\n';
+    if (dp[0]==-1) std::cout << "0\n";
+    else std::cout << dp[0] << '\n';
   }
   return 0;
 }
