@@ -29,30 +29,11 @@ void read(int &x)
   if (MINUS_FLAG) x*=-1;
 }
   
-int factors(int x, int d)
+int f(int x, int d)
 {
   int cnt=0;
   while (x%d==0) ++cnt, x/=d;
   return cnt;
-}
-
-int solve(int n, int k, const std::vector<int> &v, int d)
-{
-  std::vector<int> dp(k, INF);
-  dp[0]=factors(v[0], d);
-
-  for (int i=1;i<n;++i) {
-    int a=factors(v[i], d);
-
-    std::vector<int> tmp(k, INF);
-    for (int j=0;j<k;++j) {
-      tmp[0]=std::min(tmp[0], dp[j]+a);
-
-      if (j+1<k) tmp[j+1]=std::min(tmp[j+1], dp[j]);
-    }
-    dp=tmp;
-  }
-  return dp[0];
 }
 
 int main()
@@ -64,11 +45,29 @@ int main()
   int t;  read(t);
   while (t--) {
     int n, k; read(n), read(k);
-    
-    std::vector<int> v(n);
-    for (int &x:v) read(x);
-    
-    std::cout << std::min(solve(n, k, v, 2), solve(n, k, v, 5)) << '\n';
+    int x;  read(x);
+
+    std::vector<int> dp2(k, INF), dp5(k, INF);
+    dp2[0]=f(x, 2), dp5[0]=f(x, 5);
+
+    for (int i=1;i<n;++i) {
+      read(x);
+
+      int a=f(x, 2), b=f(x, 5);
+      std::vector<int> tmp2(k, INF), tmp5(k, INF);
+      for (int j=0;j<k;++j) {
+        tmp2[0]=std::min(tmp2[0], dp2[j]+a);
+        tmp5[0]=std::min(tmp5[0], dp5[j]+b);
+
+        if (j+1<k) {
+          tmp2[j+1]=std::min(tmp2[j+1], dp2[j]);
+          tmp5[j+1]=std::min(tmp5[j+1], dp5[j]);
+        }
+      }
+      dp2=tmp2;
+      dp5=tmp5;
+    }
+    std::cout << std::min(dp2[0], dp5[0]) << '\n';
   }
   return 0;
 }
