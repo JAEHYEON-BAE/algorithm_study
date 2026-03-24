@@ -7,6 +7,28 @@
 
 #define DEBUG(x) std::cerr << #x << " = " << x << std::endl
 
+/* INPUT */
+#define INPUT_BUFFER_SIZE (1<<20)
+char get()
+{
+  static char buf[INPUT_BUFFER_SIZE], *S=buf, *T=buf;
+  if (S==T) {
+    T=(S=buf)+fread(buf, 1, INPUT_BUFFER_SIZE, stdin);
+    if (S==T) return EOF;
+  }
+  return *S++;
+}
+void read(int &x)
+{
+  static char c; x=0;
+  bool MINUS_FLAG=0;
+  for (c=get();(c<'0'||c>'9')&&c!='-';c=get());
+  if (c=='-') {MINUS_FLAG=1;c=get();}
+  for (;c>='0'&&c<='9';c=get()) x=x*10+(c-'0');
+  if (MINUS_FLAG) x*=-1;
+}
+
+
 std::pair<int, int> DFS(int u, int p, const std::vector<std::vector<int>> &tree, std::vector<int> &dist, std::vector<bool> &visited)
 {
   int idx=u, len=dist[u];
@@ -35,11 +57,11 @@ int main()
   std::cin.tie(nullptr);
   std::cout.tie(nullptr);
 
-  int n;  std::cin >> n;
+  int n;  read(n);
 
   std::unordered_set<std::pair<int, int>, PairHash> s;
   for (int i=0;i<n-1;++i) {
-    int u, v; std::cin >> u >> v;
+    int u, v; read(u), read(v);
     --u, --v;
     if (u>v) std::swap(u, v);
     s.insert(std::make_pair(u, v));
@@ -47,7 +69,7 @@ int main()
 
   std::vector<std::vector<int>> tree(n);
   for (int i=0;i<n-1;++i) {
-    int u, v; std::cin >> u >> v;
+    int u, v; read(u), read(v);
     --u, --v;
     if (u>v) std::swap(u, v);
     if (s.count(std::make_pair(u, v))) {
